@@ -1,0 +1,21 @@
+main
+	|	
+	+-RobotControl -> RobotOverseer
+		|
+		+-vector RobotObject
+		+-RobotDetction
+		+-RobotOverseer -> RobotControl
+			|
+		|<--+
+		|  
+		+ RobotObject -> RobotCalc -> RobotControl -> sendCmd
+			|
+			+assing robots
+
+RobotObject
+	|
+	+ vector Path
+	+ next point
+		+ winkel to point
+
+Vect2D needed?
