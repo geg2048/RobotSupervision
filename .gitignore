@@ -30,3 +30,6 @@
 #Dolphin
 .directory
 
+#Eclipse
+.cproject
+.project
