@@ -9,7 +9,7 @@
 #include "RobotObject.h"
 #include "RobotControl.h"
 
-//main
+//main function
 int main(int argc, char** argv)
 {
 	RobotOverseer *ro = new RobotOverseer();
