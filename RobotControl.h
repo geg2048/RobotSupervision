@@ -11,7 +11,7 @@
 
 class RobotObject;
 
-class RobotControl : RobotObject{
+class RobotControl : public RobotObject {
 public:
     RobotControl(int robId);
 	virtual ~RobotControl();
@@ -20,6 +20,7 @@ public:
 	void setMotorRight(float right);
 
 	void setMotors(float left,float right);
+	void setMotors();
 
 	Vect2D getCurrentTargetPoint();
 
@@ -29,17 +30,25 @@ public:
 
 	void controlRobot();
 
-private:
+protected:
 	void sendCMD(void *cmd,size_t size);
 	void sendMotorCmd(char motor,float speed);
     void folowPoints();
     void turnRobot();
     void stopRobot();
 
-    // TODO: move to robojekt
+    float _motorLeftSpeed;
+    float _motorRightSpeed;
+
+    void setNextTargetPoint();
 	std::vector<Vect2D> _tagetPoints;
 	size_t _currentTargetPoint;
+	int _tagetPointTreshold;
 
+	const float _defaultSpeed;
+	const float _speedMultiplier;
+
+private:
 	// Socket for Bluethoot
 	int _RobSocket;
 };
