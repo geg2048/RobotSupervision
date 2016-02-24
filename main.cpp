@@ -14,10 +14,10 @@ int main(int argc, char** argv)
 {
 	RobotOverseer *ro = new RobotOverseer();
 
-	RobotObject *r1 = new RobotControl(1);
-	RobotObject *r2 = new RobotControl(2);
-	RobotObject *r3 = new RobotControl(3);
-	RobotObject *r4 = new RobotControl(4);
+	RobotControl *r1 = new RobotControl(1);
+	RobotControl *r2 = new RobotControl(2);
+	RobotControl *r3 = new RobotControl(3);
+	RobotControl *r4 = new RobotControl(4);
 
 	ro->initWebcam(0);
 

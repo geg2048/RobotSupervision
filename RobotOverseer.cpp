@@ -1,4 +1,5 @@
 #include "RobotOverseer.h"
+#include <chrono>
 
 RobotOverseer::RobotOverseer() : _threadRunning(false) {
 	_robDetect = new RobotDetection();
@@ -16,7 +17,7 @@ bool RobotOverseer::initWebcam(int cam){
 	return _robDetect->initCapture(cam);
 }
 
-void RobotOverseer::AddRobotForOverseeing(RobotObject *rob){
+void RobotOverseer::AddRobotForOverseeing(RobotControl *rob){
 	_robotList.push_back(rob);
 	_robCalc->setRobotList(&_robotList);
 }
@@ -43,9 +44,19 @@ void RobotOverseer::overseer(){
 	}
 }
 
+void RobotOverseer::keepRobotsAlive(){
+	while(_threadRunning){
+		for (size_t i = 0; i < _robotList.size(); ++i) {
+			_robotList[i]->keepAlive();
+		}
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+}
+
 void RobotOverseer::startOverseerTread(){
 	_threadRunning = true;
  	overseerTread = std::thread(startTread,this);
+ 	keepAliveTread = std::thread(startKeepAliveTread,this);
 }
 
 
@@ -54,10 +65,15 @@ void RobotOverseer::stopOverseerTread(){
 	if(_threadRunning){
 		_threadRunning = false;
 		overseerTread.join();
+		keepAliveTread.join();
 	}
 }
 
 void RobotOverseer::startTread(RobotOverseer *ro){
 	ro->overseer();
+}
+
+void RobotOverseer::startKeepAliveTread(RobotOverseer *ro){
+	ro->keepRobotsAlive();
 }
 

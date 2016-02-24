@@ -1,12 +1,14 @@
 #include "RobotControl.h"
 #include <stdlib.h>
 
-RobotControl::RobotControl(int robId) : RobotObject(robId) , _defaultSpeed(0.5) {
+RobotControl::RobotControl(int robId) : RobotObject(robId) , _defaultSpeed(0.5), _speedMultiplier(0.01) {
 	// TODO Auto-generated constructor stub
 	_RobSocket = -1;
 	_motorLeftSpeed = _defaultSpeed;
 	_motorRightSpeed = _defaultSpeed;
 	_currentTargetPoint = 0;
+
+
 }
 
 RobotControl::~RobotControl() {
@@ -109,6 +111,8 @@ void RobotControl::sendMotorCmd(char motor,float speed){
 		speed = -1;
 	}
 
+	std::lock_guard<std::mutex> lock(sendCmdMurtex);
+
 	this->sendCMD(&motor, sizeof(char));
 	this->sendCMD(&speed, sizeof(float));
 }
@@ -142,6 +146,12 @@ void RobotControl::folowPoints(){
 	} else {
 		_motorLeftSpeed = angle * _speedMultiplier + _defaultSpeed;
 	}
+}
+
+void RobotControl::keepAlive(){
+	std::lock_guard<std::mutex> lock(sendCmdMurtex);
+	char c = 0;
+	sendCMD(&c,sizeof(char));
 }
 
 

@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
+#include <thread>
+#include <mutex>
 
 #include "RobotObject.h"
 
@@ -23,6 +25,8 @@ public:
 	void setMotors();
 
 	Vect2D getCurrentTargetPoint();
+
+	void keepAlive();
 
 	// Socket Verwaltung
 	bool OpenSocket(char *aMac);
@@ -47,6 +51,8 @@ protected:
 
 	const float _defaultSpeed;
 	const float _speedMultiplier;
+
+	std::mutex sendCmdMurtex;
 
 private:
 	// Socket for Bluethoot
