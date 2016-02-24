@@ -7,7 +7,6 @@
 
 #include "RobotDetection.h"
 #include "RobotControl.h"
-#include "RobotObject.h"
 #include "RobotCalc.h"
 #include "vect2d.h"
 
@@ -22,25 +21,29 @@ public:
 	RobotOverseer();
 	~RobotOverseer();
 	bool initWebcam(int cam);
-	void AddRobotForOverseeing(RobotObject *rob);
+	void AddRobotForOverseeing(RobotControl *rob);
 	void setHSV(int LowH, int HighH, int LowS, int HighS, int LowV, int HighV);
 	void startOverseerTread();
 	void stopOverseerTread();
 	void overseer();
 
+	void keepRobotsAlive();
+
 	cv::Mat * getFrame();
 private:
 	static void startTread(RobotOverseer *ro);
+	static void startKeepAliveTread(RobotOverseer *ro);
 
 	bool _threadRunning;
 	std::thread overseerTread;
+	std::thread keepAliveTread;
 
 	RobotDetection *_robDetect;
 	RobotCalc *_robCalc;
 
 	cv::Mat _currentFrame;
 
-	std::vector<RobotObject*> _robotList;
+	std::vector<RobotControl*> _robotList;
 
 };
 

@@ -10,7 +10,7 @@ RobotCalc::~RobotCalc() {
 	// TODO Auto-generated destructor stub
 }
 
-void RobotCalc::setRobotList(std::vector<RobotObject*> *robotList){
+void RobotCalc::setRobotList(std::vector<RobotControl*> *robotList){
 	_robotList = robotList;
 }
 

@@ -1,8 +1,14 @@
 #include "RobotControl.h"
+#include <stdlib.h>
 
-RobotControl::RobotControl(int robId) : RobotObject(robId) {
+RobotControl::RobotControl(int robId) : RobotObject(robId) , _defaultSpeed(0.5), _speedMultiplier(0.01) {
 	// TODO Auto-generated constructor stub
 	_RobSocket = -1;
+	_motorLeftSpeed = _defaultSpeed;
+	_motorRightSpeed = _defaultSpeed;
+	_currentTargetPoint = 0;
+
+
 }
 
 RobotControl::~RobotControl() {
@@ -24,8 +30,21 @@ void RobotControl::setMotors(float left, float right) {
 	setMotorRight(right);
 }
 
+void RobotControl::setMotors(){
+	setMotorLeft(_motorLeftSpeed);
+	setMotorRight(_motorRightSpeed);
+}
+
 Vect2D RobotControl::getCurrentTargetPoint() {
 	return _tagetPoints.at(_currentTargetPoint);
+}
+
+void RobotControl::setNextTargetPoint(){
+	if(_tagetPoints.size() >= _currentTargetPoint + 1){
+		_currentTargetPoint = 0;
+	} else {
+		_currentTargetPoint++;
+	}
 }
 
 bool RobotControl::OpenSocket(char *aMac) {
@@ -92,6 +111,8 @@ void RobotControl::sendMotorCmd(char motor,float speed){
 		speed = -1;
 	}
 
+	std::lock_guard<std::mutex> lock(sendCmdMurtex);
+
 	this->sendCMD(&motor, sizeof(char));
 	this->sendCMD(&speed, sizeof(float));
 }
@@ -101,11 +122,36 @@ void RobotControl::stopRobot(){
 }
 
 void RobotControl::turnRobot(){
-	setMotors(-0.5,0.5);
+	setMotors(-_defaultSpeed,_defaultSpeed);
 }
 
 void RobotControl::folowPoints(){
+	Vect2D tagetPoint = getCurrentTargetPoint();
+	Vect2D currentPos = this->GetDirVect();
 
+	double dist = tagetPoint.DistBetweenPoints(currentPos);
+
+	if(dist < _tagetPointTreshold){
+		setNextTargetPoint();
+		return;
+	}
+
+	double angle = currentPos.AngleBetweenVect_Grad(tagetPoint);
+
+	if(std::abs(angle) > 90){
+		//handeld my robot turn;
+	}
+	else if(angle < 0){
+		_motorRightSpeed = -angle * _speedMultiplier + _defaultSpeed;
+	} else {
+		_motorLeftSpeed = angle * _speedMultiplier + _defaultSpeed;
+	}
+}
+
+void RobotControl::keepAlive(){
+	std::lock_guard<std::mutex> lock(sendCmdMurtex);
+	char c = 0;
+	sendCMD(&c,sizeof(char));
 }
 
 

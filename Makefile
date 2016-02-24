@@ -1,4 +1,4 @@
-CXXFLAGS =	-O0 -g -fmessage-length=0 -std=c++11 -pthread
+CXXFLAGS =	-O2 -g -fmessage-length=0 -std=c++11 -pthread
 
 OBJS =		main.o RobotDetection.o RobotOverseer.o RobotObject.o vect2d.o GrapicalDebug.o RobotCalc.o RobotControl.o
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "RobotObject.h"
+#include "RobotControl.h"
 #include "vect2d.h"
 
 class RobotObject;
@@ -15,11 +15,11 @@ public:
 	virtual ~RobotCalc();
 
     void TrackRobots(std::vector<std::vector<Vect2D> > newPoints);
-    void setRobotList(std::vector<RobotObject*> *robotList);
+    void setRobotList(std::vector<RobotControl*> *robotList);
     void StateManager();
 
 private:
-    std::vector<RobotObject*> *_robotList;
+    std::vector<RobotControl*> *_robotList;
 
 };
 
