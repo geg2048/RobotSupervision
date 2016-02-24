@@ -18,4 +18,4 @@ RobotObject
 	+ next point
 		+ winkel to point
 
-Vect2D needed?
+Vect2D yes!!!
