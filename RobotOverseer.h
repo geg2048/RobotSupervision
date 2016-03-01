@@ -29,7 +29,7 @@ public:
 
 	void keepRobotsAlive();
 
-	cv::Mat * getFrame();
+	cv::Mat getThresholdedImage();
 private:
 	static void startTread(RobotOverseer *ro);
 	static void startKeepAliveTread(RobotOverseer *ro);

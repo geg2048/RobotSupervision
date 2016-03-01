@@ -1,5 +1,7 @@
 #include "RobotOverseer.h"
+
 #include <chrono>
+#include "Gui.h"
 
 RobotOverseer::RobotOverseer() : _threadRunning(false) {
 	_robDetect = new RobotDetection();
@@ -35,13 +37,31 @@ void RobotOverseer::overseer(){
 			continue;
 		}
 		_currentFrame = img.clone();
+#ifdef GUI_ACTIVE
+		GLOBAL_IMAGE = img.clone();
+#endif
 
 		_robDetect->applyHsvFilter(img,img);
 		_robDetect->calcPolygons(img,polygonList);
 
 		_robCalc->TrackRobots(polygonList);
 		_robCalc->StateManager();
+
+		for (size_t i = 0; i < _robotList.size(); ++i) {
+			_robotList[i]->controlRobot();
+		}
+
+#ifdef GUI_ACTIVE
+		cv::imshow(GLOBAL_WINDOW,GLOBAL_IMAGE);
+#endif
 	}
+}
+
+cv::Mat RobotOverseer::getThresholdedImage(){
+	cv::Mat img;
+	_robDetect->readFrame(img);
+	_robDetect->applyHsvFilter(img,img);
+	return img.clone();
 }
 
 void RobotOverseer::keepRobotsAlive(){

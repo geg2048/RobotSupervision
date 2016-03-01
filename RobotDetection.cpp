@@ -1,5 +1,4 @@
 #include "RobotDetection.h"
-#include "GrapicalDebug.h"
 
 RobotDetection::RobotDetection() :
 		_cap(), _lowHSV(0,0,0), _hightHSV(0,0,0), _captureStatus(false) {

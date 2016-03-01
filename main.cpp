@@ -2,31 +2,46 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-#include "GrapicalDebug.h"
-
 #include "RobotDetection.h"
 #include "RobotOverseer.h"
 #include "RobotObject.h"
 #include "RobotControl.h"
+#include "Gui.h"
 
 //main function
 int main(int argc, char** argv)
 {
 	RobotOverseer *ro = new RobotOverseer();
+	Gui *gui = new Gui(ro);
 
 	RobotControl *r1 = new RobotControl(1);
 	RobotControl *r2 = new RobotControl(2);
 	RobotControl *r3 = new RobotControl(3);
 	RobotControl *r4 = new RobotControl(4);
 
+	gui->initGUI();
+
+	r1->OpenSocket("30:14:11:26:01:34"); // Bertle_03
+	r2->OpenSocket("30:14:08:26:27:65"); // Bertle_11
+	r3->OpenSocket("98:D3:31:30:84:9C"); // Bertle_13
+	r4->OpenSocket("98:D3:34:90:62:36"); // Bertle_12
+
 	ro->initWebcam(0);
+
+	while(!gui->isOK()) {
+		cv::imshow(GLOBAL_WINDOW,ro->getThresholdedImage());
+	}
 
 	ro->AddRobotForOverseeing(r1);
 	ro->AddRobotForOverseeing(r2);
 	ro->AddRobotForOverseeing(r3);
 	ro->AddRobotForOverseeing(r4);
 
+
 	ro->startOverseerTread();
+
+
+	while(!gui->isOK());
 
 	ro->stopOverseerTread();
 
