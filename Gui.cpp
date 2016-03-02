@@ -17,7 +17,7 @@ Gui::Gui(RobotOverseer *robotOverseer) {
 	_okVar = 0;
 
 	_hsv.iLowH = 55;
-	_hsv.iHighH = 75;
+	_hsv.iHighH = 85;
 
 	_hsv.iLowS = 100;
 	_hsv.iHighS = 255;
@@ -33,7 +33,7 @@ Gui::~Gui() {
 
 void Gui::initGUI() {
 	cv::namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
-	//cv::namedWindow("Threshold", CV_WINDOW_NORMAL);
+	cv::namedWindow(THRESHOLD_WINDOW, CV_WINDOW_NORMAL);
 	cv::namedWindow(GLOBAL_WINDOW, CV_WINDOW_NORMAL);
 
 	cv::startWindowThread();
@@ -52,6 +52,8 @@ void Gui::initGUI() {
 			this);
 
 	cv::createTrackbar(">10 OK", "Control", &_okVar, 20);
+
+	updateHSV(0,this);
 }
 
 bool Gui::isOK(bool reset) {
@@ -95,7 +97,7 @@ void Gui::drawRobotInformation(RobotControl *rc,RobotCalc *rCalc){
 	std::string name = "Robot: ";
 	name.append(std::to_string(rc->GetRobId()));
 
-	cv::putText(GLOBAL_IMAGE,name,center,cv::FONT_HERSHEY_SIMPLEX,3,cv::Scalar(255,0,0));
+	cv::putText(GLOBAL_IMAGE,name,center,cv::FONT_HERSHEY_SIMPLEX,1,cv::Scalar(255,0,0));
 
 	switch (state) {
 		case DANGERBYROBOT:

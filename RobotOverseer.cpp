@@ -57,8 +57,12 @@ void RobotOverseer::overseer() {
 		}
 		if (gui != NULL) {
 			gui->drawRobotPolygon(polygonList);
+			cv::imshow(THRESHOLD_WINDOW, img);
 			cv::imshow(GLOBAL_WINDOW, GLOBAL_IMAGE);
 		}
+	}
+	for (size_t i = 0; i < _robotList.size(); ++i) {
+		_robotList.at(i)->stopRobot();
 	}
 }
 

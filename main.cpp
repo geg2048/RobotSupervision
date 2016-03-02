@@ -7,6 +7,7 @@
 #include "RobotObject.h"
 #include "RobotControl.h"
 #include "Gui.h"
+#include "vect2d.h"
 
 //main function
 int main(int argc, char** argv)
@@ -21,19 +22,25 @@ int main(int argc, char** argv)
 	RobotControl *r3 = new RobotControl(3);
 	RobotControl *r4 = new RobotControl(4);
 
-	r1->OpenSocket("30:14:11:26:01:34"); // Bertle_03
+	//r1->OpenSocket("30:14:11:26:01:34"); // Bertle_03
 	r2->OpenSocket("30:14:08:26:27:65"); // Bertle_11
 	r3->OpenSocket("98:D3:31:30:84:9C"); // Bertle_13
-	r4->OpenSocket("98:D3:34:90:62:36"); // Bertle_12
+	//r4->OpenSocket("98:D3:34:90:62:36"); // Bertle_12
 
 	while(!gui->isOK()) {
 		cv::imshow(GLOBAL_WINDOW,ro->getThresholdedImage());
 	}
 
-	ro->AddRobotForOverseeing(r1);
+	std::vector<Vect2D> r1Points;
+	r1Points.push_back(Vect2D(100,100));
+	r1Points.push_back(Vect2D(300,300));
+
+	r2->setTargetPoints(r1Points);
+
+	//ro->AddRobotForOverseeing(r1);
 	ro->AddRobotForOverseeing(r2);
 	ro->AddRobotForOverseeing(r3);
-	ro->AddRobotForOverseeing(r4);
+	//ro->AddRobotForOverseeing(r4);
 
 	ro->initRobotPos();
 
@@ -44,6 +51,16 @@ int main(int argc, char** argv)
 	while(!gui->isOK());
 
 	ro->stopOverseerTread();
+
+	r1->CloseSocket();
+	r2->CloseSocket();
+	r3->CloseSocket();
+	r4->CloseSocket();
+
+	delete r1;
+	delete r2;
+	delete r3;
+	delete r4;
 
 	printf("end");
 }

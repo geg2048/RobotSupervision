@@ -115,6 +115,7 @@ void RobotControl::sendMotorCmd(char motor,float speed){
 		speed = -1;
 	}
 
+	//printf("ROB%d: motor:%d,speed:%f\n",GetRobId(),motor,speed);
 	std::lock_guard<std::mutex> lock(sendCmdMurtex);
 
 	this->sendCMD(&motor, sizeof(char));
@@ -147,7 +148,7 @@ void RobotControl::folowPoints(){
 	double angle = currentPos.AngleBetweenVect_Grad(tagetPoint);
 
 	if(std::abs(angle) > 90){
-		this->StartRotationBy(angle,(angle > 0));
+		this->StartRotationBy(angle,(bool)(angle > 0));
 	}
 	else if(angle < 0){
 		_motorRightSpeed = -angle * _speedMultiplier + _defaultSpeed;
@@ -158,6 +159,11 @@ void RobotControl::folowPoints(){
 
 void RobotControl::keepAlive(){
 	std::lock_guard<std::mutex> lock(sendCmdMurtex);
+	//printf("ROB%d: KEEP_ALIVE\n",GetRobId());
 	char c = 0;
 	sendCMD(&c,sizeof(char));
+}
+
+void RobotControl::setTargetPoints(std::vector<Vect2D> points){
+	_tagetPoints = points;
 }

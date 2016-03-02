@@ -4,7 +4,7 @@ OBJS =		main.o RobotDetection.o RobotOverseer.o RobotObject.o vect2d.o Gui.o Rob
 
 LIBS =		-lpthread -lbluetooth `pkg-config --libs opencv`
 
-TARGET =	RobotSupervision.out 
+TARGET =	RobotSupervision
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LIBS)

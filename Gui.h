@@ -13,6 +13,7 @@
 
 #define GUI_ACTIVE
 #define GLOBAL_WINDOW "Camera"
+#define THRESHOLD_WINDOW "Threshold"
 
 class RobotOverseer;
 

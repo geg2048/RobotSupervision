@@ -13,7 +13,7 @@ public:
     double m_X, m_Y;	// genaue Koordinaten
     static Vect2D ini;
 
-    Vect2D(double aX, double aY, bool aPolar);
+    Vect2D(double aX, double aY, bool aPolar = false);
     Vect2D();
     ~Vect2D();
     int XI();

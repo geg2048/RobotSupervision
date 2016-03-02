@@ -25,6 +25,7 @@ public:
 	void setMotors();
 
 	Vect2D getCurrentTargetPoint();
+	void setTargetPoints(std::vector<Vect2D> points);
 
 	void keepAlive();
 
@@ -33,12 +34,12 @@ public:
 	void CloseSocket();
 
 	void controlRobot();
+    void stopRobot();
 protected:
 	void sendCMD(void *cmd,size_t size);
 	void sendMotorCmd(char motor,float speed);
     void folowPoints();
     void turnRobot(bool clockwise = true);
-    void stopRobot();
 
     float _motorLeftSpeed;
     float _motorRightSpeed;
