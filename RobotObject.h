@@ -6,9 +6,15 @@
 #include <unistd.h>
 #include <vector>
 
-enum e_RobotStates {UNKNOWN, IDLE, DANGERBYROBOT, DANGERBYWALL, LOST};
+enum e_RobotStates {
+	UNKNOWN, IDLE, DANGERBYROBOT, DANGERBYWALL, LOST
+};
+enum e_RobotControl {
+	HALT, FOLLOWPOINTS, FORWARD, TURNCLOCKWISE, TURNCOUNTERCLOCKWISE
+};
 
 class RobotObject {
+
 public:
 	RobotObject();
 	RobotObject(int robId);
@@ -49,6 +55,13 @@ public:
 	bool ReceivedNewPoints = false;
 	// Counter For Lost Robot
 	int LostCounter;
+
+	void RCHalt();
+	void RCForward();
+	void RCTurnClockwise();
+	void RCTurnCounterClockwise();
+protected:
+	e_RobotControl controlCmd;
 private:
 	// Array which contains the Points the define the Position of the Robot
 	std::vector<Vect2D> _PointArray;

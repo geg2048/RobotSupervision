@@ -20,6 +20,7 @@ public:
 	bool startDetection(RobotOverseer &ro);
 	void setHSV(int LowH, int HighH, int LowS, int HighS, int LowV, int HighV);
 	bool readFrame(cv::Mat &img);
+	void getFrameSize(int &width, int &hight);
 	void calcPolygons(cv::Mat inputImg,
 			std::vector<std::vector<Vect2D> > &polygonList);
 	void applyHsvFilter(cv::Mat inputImg, cv::Mat &outputImg,

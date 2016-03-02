@@ -7,8 +7,6 @@ RobotControl::RobotControl(int robId) : RobotObject(robId) , _defaultSpeed(0.5),
 	_motorLeftSpeed = _defaultSpeed;
 	_motorRightSpeed = _defaultSpeed;
 	_currentTargetPoint = 0;
-
-
 }
 
 RobotControl::~RobotControl() {
@@ -90,13 +88,19 @@ void RobotControl::sendCMD(void *cmd, size_t size) {
 }
 
 void RobotControl::controlRobot(){
-	switch (GetRobotState()) {
-		case IDLE:
-			folowPoints();
+	switch (controlCmd) {
+		case FORWARD:
+			if(_tagetPoints.empty()){
+				setMotors();
+			} else {
+				folowPoints();
+			}
 			break;
-		case DANGERBYROBOT:
-		case DANGERBYWALL:
-			turnRobot();
+		case TURNCLOCKWISE:
+			turnRobot(true);
+			break;
+		case TURNCOUNTERCLOCKWISE:
+			turnRobot(false);
 		break;
 		default:
 			stopRobot();
@@ -121,8 +125,12 @@ void RobotControl::stopRobot(){
 	setMotors(0,0);
 }
 
-void RobotControl::turnRobot(){
-	setMotors(-_defaultSpeed,_defaultSpeed);
+void RobotControl::turnRobot(bool clockwise){
+	if (clockwise) {
+		setMotors(_defaultSpeed,-_defaultSpeed);
+	} else {
+		setMotors(-_defaultSpeed,_defaultSpeed);
+	}
 }
 
 void RobotControl::folowPoints(){
@@ -139,7 +147,7 @@ void RobotControl::folowPoints(){
 	double angle = currentPos.AngleBetweenVect_Grad(tagetPoint);
 
 	if(std::abs(angle) > 90){
-		//handeld my robot turn;
+		this->StartRotationBy(angle,(angle > 0));
 	}
 	else if(angle < 0){
 		_motorRightSpeed = -angle * _speedMultiplier + _defaultSpeed;
@@ -153,9 +161,3 @@ void RobotControl::keepAlive(){
 	char c = 0;
 	sendCMD(&c,sizeof(char));
 }
-
-
-
-
-
-

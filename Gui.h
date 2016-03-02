@@ -39,6 +39,9 @@ public:
 
 	bool isOK(bool reset = true);
 
+	void drawRobotPolygon(std::vector<std::vector<Vect2D> > polygonList);
+	void drawRobotInformation(RobotControl *rc,RobotCalc *rCalc);
+
 private:
 	static void updateHSV(int s,void *vp);
 	RobotOverseer *ro;

@@ -10,7 +10,6 @@ RobotDetection::~RobotDetection() {
 }
 
 bool RobotDetection::initCapture(int device) {
-
 	if (_cap.open(device)) {
 		_captureStatus = true;
 	} else {
@@ -104,4 +103,9 @@ void RobotDetection::calcPolygons(const cv::Mat inputImg,
 
 		polygonList.push_back(tmp);
 	}
+}
+
+void RobotDetection::getFrameSize(int &w, int &h){
+	w = (int)(_cap.get(CV_CAP_PROP_FRAME_WIDTH));
+	h = (int)(_cap.get(CV_CAP_PROP_FRAME_HEIGHT));
 }

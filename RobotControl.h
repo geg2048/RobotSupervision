@@ -33,12 +33,11 @@ public:
 	void CloseSocket();
 
 	void controlRobot();
-
 protected:
 	void sendCMD(void *cmd,size_t size);
 	void sendMotorCmd(char motor,float speed);
     void folowPoints();
-    void turnRobot();
+    void turnRobot(bool clockwise = true);
     void stopRobot();
 
     float _motorLeftSpeed;

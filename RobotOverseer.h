@@ -9,25 +9,30 @@
 #include "RobotControl.h"
 #include "RobotCalc.h"
 #include "vect2d.h"
+#include "Gui.h"
 
 class RobotDetection;
 class RobotControl;
 class RobotObject;
 class RobotCalc;
 class Vect2D;
+class Gui;
 
 class RobotOverseer {
 public:
-	RobotOverseer();
+	RobotOverseer(int cam);
 	~RobotOverseer();
-	bool initWebcam(int cam);
 	void AddRobotForOverseeing(RobotControl *rob);
 	void setHSV(int LowH, int HighH, int LowS, int HighS, int LowV, int HighV);
 	void startOverseerTread();
 	void stopOverseerTread();
 	void overseer();
 
+	void addGUI(Gui *gui);
 	void keepRobotsAlive();
+
+	void initRobotPos();
+	void assingeRobot(std::vector<Vect2D> robotPoints,int robID);
 
 	cv::Mat getThresholdedImage();
 private:
@@ -38,8 +43,9 @@ private:
 	std::thread overseerTread;
 	std::thread keepAliveTread;
 
-	RobotDetection *_robDetect;
-	RobotCalc *_robCalc;
+	RobotDetection *_robDetect = NULL;
+	RobotCalc *_robCalc = NULL;
+	Gui *gui = NULL;
 
 	cv::Mat _currentFrame;
 

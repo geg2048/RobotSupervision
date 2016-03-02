@@ -2,10 +2,11 @@
 #include "stdlib.h"
 
 RobotObject::RobotObject() :
-		_RobotState(UNKNOWN), _robId(0){
+		_RobotState(UNKNOWN), _robId(0) {
 }
 
-RobotObject::RobotObject(int robId) : RobotObject() {
+RobotObject::RobotObject(int robId) :
+		RobotObject() {
 	_robId = robId;
 }
 
@@ -51,13 +52,10 @@ Vect2D RobotObject::GetDirVect() {
 	int i, j, maxFound = 0;
 	double maxValue = 0;
 
-	for(i = 0; i < _PointArray.size(); i++)
-	{
+	for (i = 0; i < _PointArray.size(); i++) {
 		double sum = 0;
-		for( j = 0; j < _PointArray.size(); j++)
-		{
-			if( i != j)
-			{
+		for (j = 0; j < _PointArray.size(); j++) {
+			if (i != j) {
 				sum += _PointArray[i].DistBetweenPoints(_PointArray[j]);
 			}
 		}
@@ -73,17 +71,14 @@ Vect2D RobotObject::GetDirVect() {
 
 	return VectBetweenPoints(GetCenter(), _PointArray[maxFound]);
 }
-int RobotObject::GetRobRad(){
+int RobotObject::GetRobRad() {
 	return this->GetDirVect().VectLength();
 }
 // Sets Vars for turning by aGrad
 void RobotObject::StartRotationBy(int aGrad, bool aClockwise) {
-	if(aGrad > 170)
-	{
+	if (aGrad > 170) {
 		GradToTurn = 170;
-	}
-	else
-	{
+	} else {
 		GradToTurn = aGrad;
 	}
 	StartingVect = GetDirVect();
@@ -95,11 +90,9 @@ void RobotObject::StartRotationBy(int aGrad, bool aClockwise) {
 }
 // Check if Rotation is finished
 bool RobotObject::CheckIfRotationIsDone() {
-	printf("Angle Between is: %f\n", StartingVect.AngleBetweenVect_Grad(GetDirVect()));
-	printf("Desired Angle: %i\n", GradToTurn);
-	printf("PosX: %i PosY:%i\n",_PointArray[0].XI(),_PointArray[0].YI());
-	if (std::abs(StartingVect.AngleBetweenVect_Grad(GetDirVect())) >= GradToTurn) {
-		//RCForward();
+	if (std::abs(StartingVect.AngleBetweenVect_Grad(GetDirVect()))
+			>= GradToTurn) {
+		RCForward();
 		return true;
 	} else {
 		return false;
@@ -143,4 +136,19 @@ void RobotObject::CalcNewSpeed() {
 
 int RobotObject::GetRobId() {
 	return _robId;
+}
+
+void RobotObject::RCHalt() {
+	controlCmd = HALT;
+}
+
+void RobotObject::RCForward() {
+	controlCmd = FORWARD;
+}
+
+void RobotObject::RCTurnClockwise() {
+	controlCmd = TURNCLOCKWISE;
+}
+void RobotObject::RCTurnCounterClockwise() {
+	controlCmd = TURNCOUNTERCLOCKWISE;
 }
