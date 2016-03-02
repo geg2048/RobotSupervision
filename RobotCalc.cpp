@@ -96,7 +96,6 @@ void RobotCalc::StateManager() {
 		case IDLE:
 			if (DangerFromRobots(rob)) {
 				rob->SetRobotToDANGERBYROBOT();
-				rob->RCTurnClockwise();
 			} else if (DangerFromBorder(rob)) {
 				rob->SetRobotToDANGERBYWALL();
 			}
@@ -135,21 +134,32 @@ bool RobotCalc::DangerFromRobots(RobotControl *aRob) {
 
 	for (int j = 0; j < _robotList->size(); j++) {
 		if (aRob->GetRobId() != _robotList->at(j)->GetRobId()) {
-			if (aRob->GetCenter().DistBetweenPoints(
-					_robotList->at(j)->GetCenter()) <= BOT_RAD * 3) {
-				if (!CheckForClearPath(aRob, _robotList->at(j))) {
-					aRob->RCHalt();
-					//aRob->RCTurnClockwise();
-					return true;
-				} else {
-					aRob->RCForward();
-					return false;
-				}
-			} else {
+			switch(CheckForClearPath(aRob, _robotList->at(j)))
+			{
+			case 0:
 				aRob->RCForward();
 				return false;
+			case 1:
+				aRob->RCTurnCounterClockwise();
+				return true;
+			case 2:
+			case 3:
+			case 4:
+				aRob->RCTurnClockwise();
+				return true;
+			default: aRob->RCHalt(); break;
 			}
 		}
+	}
+}
+
+
+int AdjustAngle(int aAngle)
+{
+	if (aAngle > 30) {
+		return 2 * aAngle;
+	} else {
+		return aAngle + 60;
 	}
 }
 
@@ -158,22 +168,11 @@ bool RobotCalc::DangerFromBorder(RobotControl *aRob) {
 		if (aRob->GetDirVect().m_X < 0) {
 			volatile double angle = std::abs(
 					aRob->GetDirVect().AngleBetweenVect_Grad(Y_AXIS));
-			double turnangle = 0;
+			double turnangle = AdjustAngle(angle);
 			if (aRob->GetDirVect().m_Y >= 0) {
-				if (angle > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, false);
 				return true;
 			} else {
-				angle = 180 - angle;
-				if ((180 - angle) > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, true);
 				return true;
 			}
@@ -182,22 +181,11 @@ bool RobotCalc::DangerFromBorder(RobotControl *aRob) {
 		if (aRob->GetDirVect().m_X > 0) {
 			volatile double angle = std::abs(
 					aRob->GetDirVect().AngleBetweenVect_Grad(Y_AXIS));
-			double turnangle = 0;
+			double turnangle = AdjustAngle(angle);
 			if (aRob->GetDirVect().m_Y >= 0) {
-				if (angle > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, true);
 				return true;
 			} else {
-				angle = 180 - angle;
-				if ((180 - angle) > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, false);
 				return true;
 			}
@@ -206,22 +194,11 @@ bool RobotCalc::DangerFromBorder(RobotControl *aRob) {
 		if (aRob->GetDirVect().m_Y < 0) {
 			volatile double angle = std::abs(
 					aRob->GetDirVect().AngleBetweenVect_Grad(X_AXIS));
-			double turnangle = 0;
+			double turnangle = AdjustAngle(angle);
 			if (aRob->GetDirVect().m_X >= 0) {
-				if (angle > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, true);
 				return true;
 			} else {
-				angle = 180 - angle;
-				if ((180 - angle) > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, false);
 				return true;
 			}
@@ -230,22 +207,11 @@ bool RobotCalc::DangerFromBorder(RobotControl *aRob) {
 		if (aRob->GetDirVect().m_Y > 0) {
 			volatile double angle = std::abs(
 					aRob->GetDirVect().AngleBetweenVect_Grad(X_AXIS));
-			double turnangle = 0;
+			double turnangle = AdjustAngle(angle);
 			if (aRob->GetDirVect().m_X >= 0) {
-				if (angle > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, false);
 				return true;
 			} else {
-				angle = 180 - angle;
-				if ((180 - angle) > 30) {
-					turnangle = 2 * angle;
-				} else {
-					turnangle = angle + 60;
-				}
 				aRob->StartRotationBy(turnangle, true);
 				return true;
 			}
@@ -283,16 +249,36 @@ void RobotCalc::ReleaseSafeBots() {
 }
 
 bool RobotCalc::CheckForClearPath(RobotControl *aRob1, RobotControl *aRob2) {
-	Vect2D VectBetween = VectBetweenPoints(aRob1->GetCenter(),
-			aRob2->GetCenter());
-	double AngleBetween = std::abs(
-			aRob1->GetDirVect().AngleBetweenVect(VectBetween));
-	double DistToAB2 = sin(AngleBetween) * VectBetween.VectLength();
+	Vect2D VectBetween = VectBetweenPoints(aRob1->GetCenter(), aRob2->GetCenter());
 
-	if (DistToAB2 <= BOT_RAD * 1.5)
-		return false;
+	if (VectBetween.VectLength() <= aRob1->GetRobRad() * 1.5)
+		return 4; // Roboter ist zu nahe
+
+	if (VectBetween.VectLength() > aRob1->GetRobRad() * 5 )
+		return 0; // Roboter ist zu weit weg
+
+	double AngleBetween = aRob1->GetDirVect().AngleBetweenVect(VectBetween);
+	double DistToAB2 = 0;
+
+	if ((180 / PI) * abs(AngleBetween) >= 90)
+		return 0; // Roboter ist nicht im richtígen Winkel
+
+	DistToAB2 = sin(AngleBetween) * VectBetween.VectLength();
+
+	if (abs(DistToAB2) <= aRob1->GetRobRad() * 1.5)
+	{
+		if (AngleBetween > 0)
+			return 1; // Roboter ist Rechts
+		else if (AngleBetween < 0)
+			return 2; // Roboter ist Links
+		else
+			return 3; // Roboter ist direkt voraus
+	}
 	else
-		return true;
+	{
+		return 0;
+	}
+
 }
 
 int RobotCalc::getMaxDistToLost(){
